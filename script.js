@@ -28,7 +28,7 @@ pixels = [];
 let c = canvas.getContext('2d');
 
 for (let i=0; i<canvas.width*canvas.height; i++) {
-    if (Math.random() < 0.05) {
+    if (Math.random() < 0.5) {
         pixels.push(true);
     } else {
         pixels.push(false);
@@ -66,15 +66,15 @@ setInterval(() => {
             const zeroIndex = pixelIDistances.indexOf(0);
             pixelIDistances.splice(zeroIndex, 1);
             let totalAngle = pixelIAngles.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-            let averageAngle = totalAngle / (pixelIAngles.length - 1);
+            let averageAngle = totalAngle / pixelIAngles.length;
 
-            if (averageAngle <= 0.125 || averageAngle >= 0.825) {
+            if (averageAngle < 0.125 || averageAngle > 0.825) {
                 pixelDirections.push('up');
-            } else if (0.125 <= averageAngle && averageAngle <= 0.375) {
+            } else if (0.125 < averageAngle && averageAngle < 0.375) {
                 pixelDirections.push('right');
-            } else if (0.375 <= averageAngle && averageAngle <= 0.625) {
+            } else if (0.375 < averageAngle && averageAngle < 0.625) {
                 pixelDirections.push('down');
-            } else if (0.625 <= averageAngle && averageAngle <= 0.825) {
+            } else if (0.625 < averageAngle && averageAngle < 0.825) {
                 pixelDirections.push('left');
             } else {
                 console.log(averageAngle + ' broke the system');
@@ -107,10 +107,21 @@ setInterval(() => {
                 newPixels[i] = false;
                 newPixels[indexToMoveTo] = true;
             } else {
-                newPixels[i] = true;
+                if (newPixels[i] === false) {
+                    newPixels[i] = true;
+                } else {
+                    if (newPixels[i+1] === false) {
+                        newPixels[i+1] = true;
+                    } else {
+                        if (newPixels[i+canvas.width] === false) {
+                            newPixels[i+canvas.width] = true;
+                        } else {
+                            newPixels[i-canvas.width] = true;
+                        }
+                    }
+                }
             }
         }
     }
-    
     pixels = newPixels;
-}, 0);
+}, 1000);
